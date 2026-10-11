@@ -4,7 +4,7 @@ Builds Ashita v4 plugins on GitHub Actions with 32-bit MSVC, CMake and Ninja, ag
 
 - `format`: checks every C/C++ file against the repo's `.clang-format`.
 - `build`: fetches the SDK from `AshitaXI/Ashita-v4beta`, builds the targets and uploads the DLL.
-- `release`: attaches the DLL to the release named in `release-tag`.
+- `release`: attaches `<release-tag>.zip` to that release, with the DLL under `<install-dir>/` so it unzips straight into Ashita.
 
 ## Usage
 
@@ -42,11 +42,12 @@ The plugin's CMake must find the SDK through `ASHITA4_SDK_PATH`, as the upstream
 | `sdk-ref` | `v4.3.1.1` | tag or branch |
 | `clang-format` | `true` | |
 | `clang-format-version` | `22.1.4` | from PyPI |
-| `release-tag` | | attach the DLL to this release |
+| `release-tag` | | attach the zip to this release |
+| `install-dir` | `plugins` | folder in the zip, `polplugins` for POL plugins |
 
 ## Releases with release-please
 
-release-please opens a release PR from `feat:` and `fix:` commits. Merge it to tag the release, and the build attaches the DLL. The plugin repo needs `release-please-config.json`, `.release-please-manifest.json`, and Actions allowed to create pull requests.
+release-please opens a release PR from `feat:` and `fix:` commits. Merge it to tag the release, and the build attaches the zip. The plugin repo needs `release-please-config.json`, `.release-please-manifest.json`, and Actions allowed to create pull requests.
 
 ```yaml
 name: build
