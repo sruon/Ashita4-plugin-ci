@@ -1,14 +1,14 @@
 # Ashita4-plugin-ci
 
-Reusable workflow to build Ashita v4 plugins on GitHub Actions: 32-bit MSVC, CMake and Ninja, against the Ashita SDK pulled from upstream at a pinned tag.
+Builds Ashita v4 plugins on GitHub Actions with 32-bit MSVC, CMake and Ninja, against a pinned tag of the Ashita SDK.
 
-- `format`: `clang-format --dry-run --Werror` on every tracked C/C++ file, using the repo's `.clang-format`.
-- `build`: fetches `plugins/sdk` from `AshitaXI/Ashita-v4beta`, sets `ASHITA4_SDK_PATH`, builds the targets and uploads the DLL as an artifact.
-- `release`: attaches the DLL to a release when `release-tag` is set.
+- `format`: checks every C/C++ file against the repo's `.clang-format`.
+- `build`: fetches the SDK from `AshitaXI/Ashita-v4beta`, builds the targets and uploads the DLL.
+- `release`: attaches the DLL to the release named in `release-tag`.
 
 ## Usage
 
-`.github/workflows/build.yml` in the plugin repo:
+Add `.github/workflows/build.yml` to the plugin repo:
 
 ```yaml
 name: build
@@ -25,7 +25,7 @@ jobs:
       output-dir-variable: MYPLUGIN_OUTPUT_DIR
 ```
 
-The plugin's CMake has to find the SDK through `ASHITA4_SDK_PATH` (the upstream `FindAshitaSDK.cmake` does) and either take its output directory from a cache variable or set `artifact-path` to wherever the DLL lands under `build/`.
+The plugin's CMake must find the SDK through `ASHITA4_SDK_PATH`, as the upstream `FindAshitaSDK.cmake` does. If it has no output directory variable, point `artifact-path` at the DLL under `build/`.
 
 ## Inputs
 
@@ -46,7 +46,7 @@ The plugin's CMake has to find the SDK through `ASHITA4_SDK_PATH` (the upstream 
 
 ## Releases with release-please
 
-release-please opens a release PR from Conventional Commit subjects; merging it tags the release and the build attaches the DLL. The plugin repo needs `release-please-config.json` and `.release-please-manifest.json`, and Actions allowed to create pull requests.
+release-please opens a release PR from `feat:` and `fix:` commits. Merge it to tag the release, and the build attaches the DLL. The plugin repo needs `release-please-config.json`, `.release-please-manifest.json`, and Actions allowed to create pull requests.
 
 ```yaml
 name: build
