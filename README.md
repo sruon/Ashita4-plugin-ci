@@ -38,6 +38,18 @@ The plugin's CMake must find the SDK through `ASHITA4_SDK_PATH`, as the upstream
 | `cmake-args` | | extra configure arguments, space separated |
 | `build-type` | `Release` | |
 | `submodules` | `false` | `false`, `true` or `recursive` |
+| `private-owner` | | GitHub owner whose `https://github.com/<owner>/` URLs are fetched over SSH with the `ssh-key` secret |
+
+A build that fetches a private repository at configure time, such as through CMake's `FetchContent`, passes a read-only deploy key as the `ssh-key` secret and its owner as `private-owner`:
+
+```yaml
+    uses: sruon/Ashita4-plugin-ci/.github/workflows/build-plugin.yml@v1.1
+    with:
+      targets: myplugin
+      private-owner: my-org
+    secrets:
+      ssh-key: ${{ secrets.DEPLOY_KEY }}
+```
 | `sdk-repository` | `AshitaXI/Ashita-v4beta` | |
 | `sdk-ref` | `v4.3.1.1` | tag or branch |
 | `clang-format` | `true` | |

@@ -53,6 +53,14 @@ on:
         description: Folder under Ashita's root the DLL goes in, plugins or polplugins
         type: string
         default: plugins
+      private-owner:
+        description: GitHub owner whose https:// URLs the ssh-key secret fetches over SSH
+        type: string
+        default: ''
+    secrets:
+      ssh-key:
+        description: SSH key for private repositories the build fetches, such as a deploy key
+        required: false
 
 permissions:
   contents: read
@@ -96,6 +104,19 @@ jobs:
           git -C "$sdk" sparse-checkout set plugins/sdk
           git -C "$sdk" checkout
           echo "ASHITA4_SDK_PATH=$sdk/plugins/sdk" >> "$GITHUB_ENV"
+
+      - name: Fetch private repositories over SSH
+        shell: bash
+        env:
+          SSH_KEY: ${{ secrets.ssh-key }}
+          PRIVATE_OWNER: ${{ inputs.private-owner }}
+        run: |
+          if [ -z "$SSH_KEY" ] || [ -z "$PRIVATE_OWNER" ]; then exit 0; fi
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          git config --global url."git@github.com:$PRIVATE_OWNER/".insteadOf "https://github.com/$PRIVATE_OWNER/"
 
       - name: Load MSVC x86
         shell: pwsh
